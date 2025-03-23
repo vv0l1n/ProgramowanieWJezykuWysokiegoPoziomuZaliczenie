@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Details of user: {{ user.username }}</h1>
+    <p><strong>Role:</strong> {{ user.role }}</p>
+
+    <h2>Rental history</h2>
+    {% if user.rentals %}
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Car</th>
+            <th>Date of rent</th>
+            <th>Date of return</th>
+        </tr>
+        {% for rental in user.rentals %}
+        <tr>
+            <td>{{ rental.car.brand }} {{ rental.car.model }}</td>
+            <td>{{ rental.rental_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ rental.return_date.strftime('%Y-%m-%d') if rental.return_date else 'Still in rent' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No rental history.</p>
+    {% endif %}
+
+    <a href="{{ url_for('admin_users') }}">Back to the users list</a>
+{% endblock %}

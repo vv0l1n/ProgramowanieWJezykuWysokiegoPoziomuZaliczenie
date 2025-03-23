@@ -27,6 +27,7 @@
             <th>Brand</th>
             <th>Model</th>
             <th>Status</th>
+            <th>Rented by</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -43,6 +44,17 @@
             </td>
             <td>{{ car.model }}</td>
             <td>{{ 'Rented' if car.is_rented else 'Available' }}</td>
+             <td>
+                {% if car.is_rented %}
+                    {% for rental in car.rentals %}
+                        {% if not rental.return_date %}
+                            {{ rental.user.username }}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    No rental
+                {% endif %}
+             </td>
             <td>
                 <a href="{{ url_for('delete_car', car_id=car.id) }}" class="btn btn-danger btn-sm">Delete</a>
             </td>

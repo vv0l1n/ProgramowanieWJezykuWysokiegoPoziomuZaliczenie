@@ -1,9 +1,11 @@
+from datetime import datetime, timezone
+
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 from forms import LoginForm, AddCarForm, RegistrationForm
 from helpers import create_app
-from models import db, User, Car
+from models import db, User, Car, Rental
 
 db, app = create_app(db)
 
@@ -93,6 +95,16 @@ def edit_car(car_id):
     db.session.commit()
     return redirect(url_for('admin_panel'))
 
+@app.route('/admin/users')
+def admin_users():
+    users = User.query.all()
+    return render_template('admin_users.html', users=users)
+
+@app.route('/admin/users/<int:user_id>')
+def user_details(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('user_details.html', user=user)
+
 @app.route('/user')
 @login_required
 def user_panel():
@@ -105,11 +117,14 @@ def user_panel():
 @login_required
 def rent_car(car_id):
     car = Car.query.get(car_id)
-    if not car.is_rented:
+    if car and not car.is_rented:
         car.is_rented = True
         car.rented_by = current_user.id
+        rental = Rental(user_id=current_user.id, car_id=car.id, rental_date=datetime.utcnow())
+        db.session.add(rental)
         db.session.commit()
     return redirect(url_for('user_panel'))
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -131,11 +146,15 @@ def register():
 @login_required
 def return_car(car_id):
     car = Car.query.get(car_id)
-    if car.rented_by == current_user.id:
+    if car and car.rented_by == current_user.id:
         car.is_rented = False
         car.rented_by = None
-        db.session.commit()
+        rental = Rental.query.filter_by(car_id=car.id, user_id=current_user.id, return_date=None).first()
+        if rental:
+            rental.return_date = datetime.utcnow()
+            db.session.commit()
     return redirect(url_for('user_panel'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -9,6 +9,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(256), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(50), nullable=False)
+    rentals = db.relationship('Rental', back_populates='user')
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -22,3 +23,14 @@ class Car(db.Model):
     model = db.Column(db.String(100), nullable=False)
     is_rented = db.Column(db.Boolean, default=False)
     rented_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    rentals = db.relationship('Rental', back_populates='car')
+
+class Rental(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    car_id = db.Column(db.Integer, db.ForeignKey('car.id'), nullable=False)
+    rental_date = db.Column(db.DateTime, nullable=False)
+    return_date = db.Column(db.DateTime)
+    user = db.relationship('User', back_populates='rentals')
+    car = db.relationship('Car', back_populates='rentals')
+
