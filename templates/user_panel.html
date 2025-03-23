@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Available Cars</h2>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for car in cars %}
+    <tr>
+        <td>{{ car.id }}</td>
+        <td>{{ car.brand }}</td>
+        <td>{{ car.model }}</td>
+        <td>
+            <a href="{{ url_for('rent_car', car_id=car.id) }}" class="btn btn-success btn-sm">Rent</a>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="4">No available cars.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% if rented_cars %}
+
+<h2>Rented Cars</h2>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for car in rented_cars %}
+    <tr>
+        <td>{{ car.id }}</td>
+        <td>{{ car.brand }}</td>
+        <td>{{ car.model }}</td>
+        <td>
+            <a href="{{ url_for('return_car', car_id=car.id) }}" class="btn btn-success btn-sm">Return</a>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="4">No available cars.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>You have not rented any cars yet.</p>
+{% endif %}
+
+{% endblock %}

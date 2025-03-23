@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Admin Panel - Manage Cars</h2>
+
+<h4>Add New Car</h4>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.brand.label(class="form-label") }}
+        {{ form.brand(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.model.label(class="form-label") }}
+        {{ form.model(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.submit(class="btn btn-success") }}
+    </div>
+</form>
+
+<h4 class="mt-5">All Cars</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for car in cars %}
+        <tr>
+            <td>{{ car.id }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('edit_car', car_id=car.id) }}" class="d-flex">
+                    <input type="text" name="brand" value="{{ car.brand }}" class="form-control me-2">
+                    <input type="text" name="model" value="{{ car.model }}" class="form-control me-2">
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                </form>
+            </td>
+            <td>{{ car.model }}</td>
+            <td>{{ 'Rented' if car.is_rented else 'Available' }}</td>
+            <td>
+                <a href="{{ url_for('delete_car', car_id=car.id) }}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
