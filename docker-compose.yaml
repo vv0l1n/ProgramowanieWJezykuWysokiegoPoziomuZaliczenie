@@ -11,6 +11,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "7890:5432"
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
 
 volumes:
   postgres_data:

@@ -18,7 +18,7 @@ def create_tables_and_admin(app, db):
 def create_app(db):
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secretkey'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@localhost:7890/car_rent'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@db:5432/car_rent'
 
     db.init_app(app)
 
